@@ -21,31 +21,21 @@ Currently AutoBridge supports the Xilinx Alveo U250 and U280 FPGAs. Specifically
 Basic Usage
 ::::::::::::
 
-When running ``tapac``, add the ``--enable-floorplan`` option and specify the output constraint file with the ``--floorplan-output`` option.
+When running ``tapa compile``, add the ``--floorplan`` option and specify the output constraint file with the ``--floorplan-output`` option.
 
 .. code-block:: shell
   :emphasize-lines: 5,6
 
-  tapac -o vadd.$platform.hw.xo vadd.cpp \
-    --platform $platform \
-    --top VecAdd \
-    --work-dir vadd.$platform.hw.xo.tapa \
-    --enable-floorplan \
-    --floorplan-output constraint.tcl
+  tapa --work-dir vadd.$platform.hw.xo.tapa \
+       compile -f vadd.cpp --top VecAdd \
+               -o vadd.$platform.hw.xo \
+               --platform $platform \
+               --floorplan \
+               --floorplan-output constraint.tcl \
+               --connectivity connectivity.ini
 
 AutoBridge needs to know how the AXI interfaces bind to the physical ports, thus the user need to provide a
-`connectivity configuration file <https://docs.xilinx.com/r/en-US/ug1393-vitis-application-acceleration/connectivity-Options>`_ through the ``--connectivity`` option:
-
-.. code-block:: shell
-  :emphasize-lines: 7
-
-  tapac -o vadd.$platform.hw.xo vadd.cpp \
-    --platform $platform \
-    --top VecAdd \
-    --work-dir vadd.$platform.hw.xo.tapa \
-    --enable-floorplan \
-    --floorplan-output constraint.tcl \
-    --connectivity connectivity.ini
+`connectivity configuration file <https://docs.xilinx.com/r/en-US/ug1393-vitis-application-acceleration/connectivity-Options>`_ through the ``--connectivity`` option.
 
 .. note::
 
@@ -60,7 +50,7 @@ Here is an example of the connectivity file. The syntax is the same as required 
   sp=VecAdd_1.b:DDR[1]
   sp=VecAdd_1.c:DDR[2]
 
-- Note that if you invoke tapac from the command line, you must append an ``_1`` suffix to the top name. On the other hand, you must not append this suffix if you use the cmake flow.
+- Note that if you invoke ``tapa`` from the command line, you must append an ``_1`` suffix to the top name. On the other hand, you must not append this suffix if you use the cmake flow.
 
 
 By default, AutoBridge uses the resource estimation from HLS report.
@@ -71,18 +61,18 @@ This option instructs TAPA to run logic synthesis of each task to get a more acc
 .. code-block:: shell
   :emphasize-lines: 8
 
-  tapac -o vadd.$platform.hw.xo vadd.cpp \
-    --platform $platform \
-    --top VecAdd \
-    --work-dir vadd.$platform.hw.xo.tapa \
-    --enable-floorplan \
-    --floorplan-output constraint.tcl \
-    --connectivity connectivity.ini \
-    --enable-synth-util
+  tapa --work-dir vadd.$platform.hw.xo.tapa \
+       compile -f vadd.cpp --top VecAdd \
+               -o vadd.$platform.hw.xo \
+               --platform $platform \
+               --floorplan \
+               --floorplan-output constraint.tcl \
+               --connectivity connectivity.ini
+               --enable-synth-util
 
 .. note::
 
-  Tasks are synthesized in parallel for the post-synthesis area report. Still, this step could takes a while as RTL synthesis is much slower than C synthesis. By default, tapac will invoke 8 parallel Vivado processes to synthesize each task. You could allow more processes through the ``--max-parallel-synth-jobs`` option, though you should be careful to not run out of memory.
+  Tasks are synthesized in parallel for the post-synthesis area report. Still, this step could takes a while as RTL synthesis is much slower than C synthesis. By default, ``tapa`` will invoke 8 parallel Vivado processes to synthesize each task. You could allow more processes through the ``--max-parallel-synth-jobs`` option, though you should be careful to not run out of memory.
 
 
 If an external memory port is only read from or only write to, you should mark it through the ``--read-only-args`` and ``--write-only-args`` options. They will help improve the floorplan quality. Those options accept regular expressions representing multiple ports. In the example, ports whose names match the pattern ``hbm_[0-3]`` will be marked as read-only, while ports ``my_out_port`` and ``another_out_port`` will be marked as write-only.
@@ -90,17 +80,18 @@ If an external memory port is only read from or only write to, you should mark i
 .. code-block:: shell
   :emphasize-lines: 9,10,11
 
-  tapac -o vadd.$platform.hw.xo vadd.cpp \
-    --platform $platform \
-    --top VecAdd \
-    --work-dir vadd.$platform.hw.xo.tapa \
-    --enable-floorplan \
-    --floorplan-output constraint.tcl \
-    --connectivity connectivity.ini \
-    --enable-synth-util \
-    --read-only-args "hbm_[0-3]" \
-    --write-only-args "my_out_port" \
-    --write-only-args "another_out_port" \
+  tapa --work-dir vadd.$platform.hw.xo.tapa \
+       compile -f vadd.cpp --top VecAdd \
+               -o vadd.$platform.hw.xo \
+               --platform $platform \
+               --floorplan \
+               --floorplan-output constraint.tcl \
+               --connectivity connectivity.ini
+               --enable-synth-util \
+               --read-only-args "hbm_[0-3]" \
+               --write-only-args "my_out_port" \
+               --write-only-args "another_out_port"
+
 
 Visualize the Impact of AutoBridge
 ::::::::::::::::::::::::::::::::::::::
@@ -139,44 +130,38 @@ The key idea of AutoBridge is that it utilizes the pipelining flexibility of dat
 Skip Repetitive HLS Synthesis
 ::::::::::::::::::::::::::::::::::::::
 
-The following sections discuss how to manipulate the floorplanning process and you may need to run floorplanning multiple times on the same design. To avoid re-running HLS compilation of the tasks, you could specify which steps of TAPA you want to activate. By default, TAPA will execute all steps.
+The following sections discuss how to manipulate the floorplanning process and you may need to run floorplanning multiple times on the same design. To avoid re-running TAPA compilation of the tasks, you could specify which steps of TAPA you want to activate. By default, TAPA will execute all steps.
 
 .. code-block:: shell
 
-  tapac -o vadd.$platform.hw.xo vadd.cpp \
-    --platform $platform \
-    --top VecAdd \
-    --work-dir vadd.$platform.hw.xo.tapa \
+  tapa --work-dir vadd.$platform.hw.xo.tapa \
+       compile -f vadd.cpp --top VecAdd \
+               -o vadd.$platform.hw.xo \
+               --platform $platform \
+               --floorplan \
+               --floorplan-output constraint.tcl
 
 This is equivalent to:
 
 .. code-block:: shell
-  :emphasize-lines: 5,6,7,8,9,10
+  :emphasize-lines: 2,3,4,5,6
 
-  tapac -o vadd.$platform.hw.xo vadd.cpp \
-    --platform $platform \
-    --top VecAdd \
-    --work-dir vadd.$platform.hw.xo.tapa \
-    --run-tapacc \
-    --run-hls \
-    --generate-task-rtl \
-    --run-floorplanning \
-    --generate-top-rtl \
-    --pack-xo \
+  tapa --work-dir vadd.$platform.hw.xo.tapa \
+       analyze -f vadd.cpp --top VecAdd \
+       synth   --platform $platform \
+       optimize-floorplan \
+       link    --floorplan-output constraint.tcl \
+       pack    -o vadd.$platform.hw.xo
 
-If you want to re-run floorplanning only, you could only specify the last four steps:
+If you want to re-run floorplanning only, you could specify only those steps:
 
 .. code-block:: shell
-  :emphasize-lines: 5,6,7,8
+  :emphasize-lines: 2,3,4
 
-  tapac -o vadd.$platform.hw.xo vadd.cpp \
-    --platform $platform \
-    --top VecAdd \
-    --work-dir vadd.$platform.hw.xo.tapa \
-    --generate-task-rtl \
-    --run-floorplanning \
-    --generate-top-rtl \
-    --pack-xo \
+  tapa --work-dir vadd.$platform.hw.xo.tapa \
+       synth   --platform $platform \
+       optimize-floorplan \
+       link    --floorplan-output constraint.tcl
 
 Manipulate the Floorplan Parameters
 ::::::::::::::::::::::::::::::::::::::::

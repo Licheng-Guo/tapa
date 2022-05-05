@@ -1,7 +1,7 @@
 TAPA Compiler
 =============
 
-The task of ``tapac`` is to compile a translation unit of a subset of C++ to a
+The task of ``tapa`` is to compile a translation unit of a subset of C++ to a
 set of Verilog files.
 The translation unit MUST have a top-level task,
 which corresponds to the top-level module in the generated Verilog files.

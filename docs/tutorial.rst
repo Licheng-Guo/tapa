@@ -156,10 +156,10 @@ The first step would be to run high-level synthesize (HLS):
 .. code-block:: bash
 
   platform=xilinx_u250_xdma_201830_2  # replace with your target platform
-  tapac -o vadd.$platform.hw.xo vadd.cpp \
-    --platform $platform \
-    --top VecAdd \
-    --work-dir vadd.$platform.hw.xo.tapa
+  tapa --work-dir vadd.$platform.hw.xo.tapa
+       compile -f vadd.cpp --top VecAdd \
+               --platform $platform \
+               -o vadd.$platform.hw.xo
 
 This will take a couple of minutes.
 HLS reports will be available in the working directory

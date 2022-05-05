@@ -113,7 +113,7 @@ Build and Installation
 
     python3 -m pip install --editable tapa/backend/python
 
-  Any changes made to the source will be reflected when you run ``tapac``.
+  Any changes made to the source will be reflected when you run ``tapa``.
   Therefore, it is easy to upgrade your local installation:
   simply pull the latest change from GitHub.
 
@@ -151,6 +151,7 @@ This number should be adjusted according to your available cores and memory.
 .. code-block:: bash
 
   sudo ln -sf "${PWD}"/backend/tapacc /usr/local/bin/
+  sudo ln -sf "${PWD}"/backend/tapa-clang /usr/local/bin/
   sudo ln -sf "${PWD}"/../src/tapa{,.h} /usr/local/include/
   sudo ln -sf "${PWD}"/libtapa.{a,so} /usr/local/lib/
 
@@ -196,13 +197,13 @@ and it is free for academia.
 Verify Installation
 ===================
 
-Check if ``tapac`` is available after installation:
+Check if ``tapa`` is available after installation:
 
 .. code-block:: bash
 
-  tapac --help
+  tapa --help
 
-If ``tapac`` is not found,
+If ``tapa`` is not found,
 you may need to add ``${HOME}/.local/bin`` to your ``PATH``:
 
 .. code-block:: bash

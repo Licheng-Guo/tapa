@@ -11,10 +11,12 @@ if(SDx_FOUND)
     nested-vadd-hw-xo
     INPUT vadd.cpp
     TOP VecAddNested
+    CONNECTIVITY ${CMAKE_CURRENT_SOURCE_DIR}/link_config.ini
     PLATFORM ${PLATFORM})
 
   add_xocc_hw_link_targets(
     ${CMAKE_CURRENT_BINARY_DIR}
+    --config=${CMAKE_CURRENT_SOURCE_DIR}/link_config.ini
     INPUT nested-vadd-hw-xo
     HW_EMU_XCLBIN
     hw_emu_xclbin

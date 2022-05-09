@@ -22,10 +22,12 @@ if(SDx_FOUND)
     graph-hw-xo
     INPUT graph.cpp
     TOP Graph
+    CONNECTIVITY ${CMAKE_CURRENT_SOURCE_DIR}/link_config.ini
     PLATFORM ${PLATFORM})
 
   add_xocc_hw_link_targets(
     ${CMAKE_CURRENT_BINARY_DIR}
+    --config=${CMAKE_CURRENT_SOURCE_DIR}/link_config.ini
     INPUT graph-hw-xo
     HW_EMU_XCLBIN
     hw_emu_xclbin

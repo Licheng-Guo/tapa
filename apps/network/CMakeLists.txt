@@ -11,10 +11,12 @@ if(SDx_FOUND)
     network-hw-xo
     INPUT network.cpp
     TOP Network
+    CONNECTIVITY ${CMAKE_CURRENT_SOURCE_DIR}/link_config.ini
     PLATFORM ${PLATFORM})
 
   add_xocc_hw_link_targets(
     ${CMAKE_CURRENT_BINARY_DIR}
+    --config=${CMAKE_CURRENT_SOURCE_DIR}/link_config.ini
     INPUT network-hw-xo
     HW_EMU_XCLBIN
     hw_emu_xclbin
